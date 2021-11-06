@@ -1,0 +1,81 @@
+doctype=html
+html
+  head
+    title Auth
+  body
+    h1 Sign In
+    #sign-in-message
+    form(onsubmit="requestSignIn(event, this)")
+      div
+        label Email
+      div
+        input(type="email" name="email")
+      button(type="submit") Submit 
+
+
+    h1 Sign Up
+    #sign-up-message
+    form(onsubmit="signUp(event, this)")
+      div: label Username
+      div: input(type="text" name="username")
+
+      div: label Email
+      div: input(type="email" name="email")
+
+      div: label First Name
+      div: input(type="text" name="firstName")
+
+      div: label Last Name
+      div: input(type="text" name="lastName")
+
+      button(type="submit") Submit 
+
+    script.
+      const API = 'http://localhost:3000/'
+
+      function innerText (id, message) {
+        document.getElementById(id).innerText = message
+      }
+
+      async function requestSignIn (event, form) {
+        event.preventDefault()
+
+        innerText('sign-in-message', '')
+
+        const EMAIL = form.querySelector('[name="email"]').value;
+
+        const response = await fetch(`${ API }request-sign-in`, {
+          method: 'POST',
+          body: JSON.stringify({ email: EMAIL }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+
+        const result = await response.json()
+        innerText('sign-in-message', (response.status === 200) ? result.success : result.error)
+      }
+
+      async function signUp (event, form) {
+        event.preventDefault()
+
+        innerText('sign-up-message', '')
+
+        const body = {
+          username: form.querySelector('[name="username"]').value,
+          email: form.querySelector('[name="email"]').value,
+          firstName: form.querySelector('[name="firstName"]').value,
+          lastName: form.querySelector('[name="lastName"]').value,
+        }
+
+        const response = await fetch(`${ API }sign-up`, {
+          method: 'POST',
+          body: JSON.stringify(body),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+
+        const result = await response.json()
+        innerText('sign-up-message', (response.status === 200) ? result.success : result.error)
+      }
